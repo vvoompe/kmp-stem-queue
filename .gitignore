@@ -5,3 +5,6 @@ __pycache__/
 venv/
 *.db
 .DS_Store
+
+.vs/
+__pycache__/
