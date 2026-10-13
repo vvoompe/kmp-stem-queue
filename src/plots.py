@@ -7,11 +7,11 @@ import numpy as np
 
 if __package__:
     from .analytics import run_analytics
-    from .input_stream import P_ITEMS, service_time
+    from .input_stream import P_ITEMS, lam_for_step, service_time
     from .sim_core import STEP_MIN, simulate_day
 else:
     from analytics import run_analytics
-    from input_stream import P_ITEMS, service_time
+    from input_stream import P_ITEMS, lam_for_step, service_time
     from sim_core import STEP_MIN, simulate_day
 
 
@@ -87,7 +87,8 @@ def plot_queue_dynamics(
 
 
 if __name__ == "__main__":
-    summary = run_analytics(queue_limit=5, lam=3)
+    # λ за періодами дня - та сама конфігурація, що в звіті (етапи 1-2)
+    summary = run_analytics(queue_limit=5, lam=lam_for_step)
     plot_input_distributions()
     plot_lost_customers(summary)
-    plot_queue_dynamics(C=1, queue_limit=5, lam=3)
+    plot_queue_dynamics(C=1, queue_limit=5, lam=lam_for_step)
