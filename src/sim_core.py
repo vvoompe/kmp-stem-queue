@@ -26,7 +26,7 @@ def simulate_day(C, queue_limit, lam, rng=None):
         raise ValueError("C must be at least 1")
     if queue_limit < 0:
         raise ValueError("queue_limit cannot be negative")
-    if lam < 0:
+    if not callable(lam) and lam < 0:
         raise ValueError("lam cannot be negative")
 
     queue = []              # черга клієнтів (у кожного - свій час обслуговування)
@@ -40,7 +40,9 @@ def simulate_day(C, queue_limit, lam, rng=None):
 
     for step in range(N_STEPS):
         # --- 1. прийшли клієнти ---
-        arrived = poisson_arrivals(lam, rng)
+        # lam може бути числом (однорідний потік) або функцією lam(step) -
+        # тоді інтенсивність залежить від періоду дня (вимога умови теми 10).
+        arrived = poisson_arrivals(lam(step) if callable(lam) else lam, rng)
         for _ in range(arrived):
             busy_servers = sum(remaining > 0 for remaining in servers)
             if len(queue) + busy_servers < C + queue_limit:

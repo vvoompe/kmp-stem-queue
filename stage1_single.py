@@ -8,16 +8,21 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
 
 import numpy as np
+from input_stream import PERIODS, lam_for_step
 from sim_core import simulate_day
 
 # --- параметри (підбираються командою) ---
-LAM = 3             # середня кількість клієнтів за крок (15 хв)
+# λ залежить від часу доби (вимога умови теми 10) - див. PERIODS у input_stream.py
+LAM = lam_for_step
 QUEUE_LIMIT = 5     # максимум місць у черзі
 C = 1               # ОДИН канал - це і є суть етапу 1
 
 print("=" * 50)
 print("ЕТАП 1: імітація одного каналу")
 print("=" * 50)
+print("\nПеріоди дня (λ - середня кількість клієнтів за крок 15 хв):")
+for _name, _start, _end, _value in PERIODS:
+    print(f"  {_name}: кроки {_start}-{_end - 1}, лямбда = {_value}")
 
 # --- 1) один прогін: показуємо, як минув один день ---
 day = simulate_day(C, QUEUE_LIMIT, LAM)

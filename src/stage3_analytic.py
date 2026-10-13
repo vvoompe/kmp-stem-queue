@@ -7,11 +7,11 @@ import pandas as pd
 
 if __package__:
     from .analytics import run_analytics
-    from .input_stream import mean_service_time
+    from .input_stream import lam_for_step, mean_arrival_rate, mean_service_time
     from .sim_core import DAY_MIN, STEP_MIN
 else:
     from analytics import run_analytics
-    from input_stream import mean_service_time
+    from input_stream import lam_for_step, mean_arrival_rate, mean_service_time
     from sim_core import DAY_MIN, STEP_MIN
 
 
@@ -83,13 +83,18 @@ def calculate_analytic(C, queue_limit, lam, mean_service=None):
 def compare_with_simulation(
     queue_limit, lam, workers=range(1, 5), runs=100, seed=42
 ):
-    """Порівнює середнє імітації з теоретичними значеннями для тих самих умов."""
+    """Порівнює середнє імітації з теоретичними значеннями для тих самих умов.
+
+    У імітації λ може бути розкладом за періодами дня, а аналітична модель
+    M/M/C/(C+m) однорідна за часом - тому для неї береться середнє λ за день.
+    """
     simulation = run_analytics(
         queue_limit, lam, workers=workers, runs=runs, seed=seed
     )
+    lam_analytic = mean_arrival_rate() if callable(lam) else lam
     analytic_rows = []
     for count in simulation["workers"]:
-        result = calculate_analytic(count, queue_limit, lam)
+        result = calculate_analytic(count, queue_limit, lam_analytic)
         analytic_rows.append({
             "workers": count,
             "analytic_served_per_day": result.served_per_day,
@@ -103,8 +108,9 @@ def compare_with_simulation(
 
 if __name__ == "__main__":
     queue_limit = 5
-    lam = 3
-    print("Параметри: lambda =", lam, "клієнтів за", STEP_MIN, "хв;")
+    lam = lam_for_step      # λ за періодами дня (вимога умови); середнє = 3.0
+    print("Параметри: lambda =", mean_arrival_rate(), "клієнтів за", STEP_MIN,
+          "хв (середнє за день; у імітації - розклад за періодами);")
     print("m =", queue_limit, "місць у черзі;")
     print("E[S] =", round(mean_service_time(), 4), "хв; день =", DAY_MIN, "хв.")
     print(compare_with_simulation(queue_limit, lam).to_string(index=False))

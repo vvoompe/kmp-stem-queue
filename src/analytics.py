@@ -4,8 +4,10 @@ import numpy as np
 import pandas as pd
 
 if __package__:
+    from .input_stream import lam_for_step
     from .sim_core import simulate_day
 else:
+    from input_stream import lam_for_step
     from sim_core import simulate_day
 
 
@@ -42,4 +44,5 @@ def run_analytics(queue_limit, lam, workers=range(1, 5), runs=100, seed=42):
 
 
 if __name__ == "__main__":
-    print(run_analytics(queue_limit=5, lam=3).to_string(index=False))
+    # λ за періодами дня (вимога умови теми 10); середнє за день = 3.0
+    print(run_analytics(queue_limit=5, lam=lam_for_step).to_string(index=False))
