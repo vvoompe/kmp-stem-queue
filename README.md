@@ -18,11 +18,6 @@
   = 3.9667 хв`; середня інтенсивність обслуговування одного працівника
   `μ = 1 / E[S]`.
 
-Файли схем для відкриття/редагування в diagrams.net:
-
-- [Схема багатоканальної СМО](diagrams/queueing_system.drawio)
-- [Граф станів СМО](diagrams/state_graph.drawio)
-
 ## Запуск
 
 З кореня проєкту встановіть залежності та запускайте модулі:
@@ -32,6 +27,14 @@ pip install -r requirements.txt
 python -m src.analytics
 python -m src.stage3_analytic
 python -m src.plots
+```
+
+Етапи 1 і 2 (імітація пункту видачі - один канал і багатоканальна система)
+запускаються з кореня проєкту:
+
+```powershell
+python stage1_single.py
+python stage2_multi.py
 ```
 
 `analytics.py` робить 100 прогонів на кожне значення `C` (за замовчуванням
